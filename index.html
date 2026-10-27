@@ -1,0 +1,619 @@
+<title>M.S. Made Me…</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Nunito:wght@500;700;800;900&display=swap">
+<style>
+/* Layout: loud orange hero with a sticker-style sentence you "spin", static yellow sayings band, a spoon-count picker that suggests products, chunky outlined cards with hard shadows, ink-coloured fine-print block. Bright colours stay the same in both themes; only the ground and outlines flip. */
+:root {
+  --bg: #fff4e2;
+  --surface: #ffffff;
+  --fg: #2a1a2e;
+  --muted: #6b5470;
+  --ink: #2a1a2e;
+  --shadow: #2a1a2e;
+  --c-orange: #ff8a1f;
+  --c-yellow: #ffd93d;
+  --c-mint: #8fe6c8;
+  --c-sky: #9fcbff;
+  --c-pink: #ffa8c8;
+  --c-peach: #ffb26b;
+  --on-color: #2a1a2e;
+  --display: "Bagel Fat One", "Nunito", system-ui, sans-serif;
+  --body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1f1423; --surface: #2e2034; --fg: #fff3e6; --muted: #d4bfd0; --ink: #ffe9d1; --shadow: #0b0610;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1f1423; --surface: #2e2034; --fg: #fff3e6; --muted: #d4bfd0; --ink: #ffe9d1; --shadow: #0b0610;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.6; font-weight: 500; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--c-yellow); }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h1, h2 { font-family: var(--display); font-weight: 400; line-height: 1; letter-spacing: 0.005em; }
+h3 { font-family: var(--body); font-weight: 900; line-height: 1.15; letter-spacing: -0.01em; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 4px solid var(--fg); outline-offset: 3px; border-radius: 8px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.wrap { max-width: 1140px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.tag { font-weight: 900; font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* chunky objects */
+.chunk { border: 3px solid var(--ink); border-radius: 20px; box-shadow: 5px 5px 0 var(--shadow); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 10px 26px;
+  background: var(--c-yellow); color: var(--on-color); border: 3px solid var(--ink); border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--shadow); font-weight: 900; font-size: 1.05rem; text-decoration: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--shadow); }
+.btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--shadow); }
+.btn.dark { background: var(--ink); color: var(--bg); }
+.btn.white { background: #fff; }
+
+/* header */
+.site-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--c-yellow); border-bottom: 3px solid var(--ink); color: var(--on-color); }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 8px; }
+.wordmark { font-family: var(--display); font-size: 1.5rem; color: var(--on-color); text-decoration: none; white-space: nowrap; }
+.nav { display: flex; align-items: center; gap: 20px; }
+.nav a { color: var(--on-color); text-decoration: none; font-weight: 900; padding: 8px 2px; }
+.nav a:hover { text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 3px; }
+.bag-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; background: var(--on-color); color: var(--c-yellow); border: 3px solid var(--on-color); border-radius: 999px; padding: 6px 18px; font-weight: 900; font-size: 1rem; }
+.bag-btn:hover { background: #fff; color: var(--on-color); }
+.bag-btn .count { background: var(--c-orange); color: var(--on-color); border-radius: 999px; min-width: 26px; height: 26px; padding: 0 7px; display: inline-grid; place-items: center; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+@media (max-width: 600px) { .nav a { display: none; } }
+
+/* hero */
+.hero { background-color: var(--c-orange); background-image: radial-gradient(rgba(42, 26, 46, 0.14) 2.5px, transparent 2.5px); background-size: 22px 22px; color: var(--on-color); border-bottom: 3px solid var(--ink); padding-block: clamp(32px, 6vw, 76px) clamp(36px, 6vw, 80px); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: clamp(28px, 5vw, 56px); align-items: center; }
+.hero .tag { display: inline-block; background: var(--on-color); color: var(--c-yellow); border-radius: 999px; padding: 5px 14px; margin-bottom: 18px; }
+.hero h1 { font-size: clamp(2.8rem, 11vw, 7rem); line-height: 0.95; }
+.bubble {
+  position: relative; margin-top: 22px; background: #fff; color: var(--on-color); border: 3px solid var(--on-color); border-radius: 26px;
+  box-shadow: 6px 6px 0 var(--on-color); padding: 16px 22px; transform: rotate(-1.5deg);
+  font-family: var(--display); font-size: clamp(1.45rem, 4.6vw, 2.5rem); line-height: 1.1; min-height: 2.5em; display: flex; align-items: center; max-width: 24em;
+}
+.bubble::after { content: ""; position: absolute; left: 36px; bottom: -17px; width: 26px; height: 26px; background: #fff; border-right: 3px solid var(--on-color); border-bottom: 3px solid var(--on-color); transform: rotate(45deg); }
+.spin-row { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 14px; }
+.hero .lede { margin-top: 24px; max-width: 46ch; font-size: 1.12rem; font-weight: 700; }
+
+.cluster { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding-block: 14px; }
+.tile { position: relative; aspect-ratio: 1 / 1; display: grid; place-items: center; background: var(--plate); color: var(--on-color); border: 3px solid var(--on-color); border-radius: 22px; box-shadow: 5px 5px 0 var(--on-color); overflow: hidden; }
+.tile svg { width: 62%; height: 62%; }
+.tile .tag { position: absolute; left: 10px; bottom: 8px; background: none; color: var(--on-color); padding: 0; margin: 0; }
+.cluster .tile:first-child { grid-row: span 2; aspect-ratio: auto; min-height: 100%; transform: rotate(-2deg); }
+.cluster .tile:nth-child(2) { transform: rotate(2deg); }
+.cluster .tile:nth-child(3) { transform: rotate(-1deg); }
+.seal { position: absolute; right: 0; top: -14px; z-index: 2; width: 104px; height: 104px; border-radius: 50%; background: var(--c-yellow); color: var(--on-color); border: 3px solid var(--on-color); box-shadow: 4px 4px 0 var(--on-color); display: grid; place-items: center; text-align: center; transform: rotate(12deg); font-weight: 900; font-size: 0.8rem; line-height: 1.1; text-transform: uppercase; letter-spacing: 0.04em; padding: 10px; }
+@media (max-width: 760px) { .hero .wrap { grid-template-columns: minmax(0, 1fr); } .cluster { max-width: 460px; } }
+
+/* plates */
+.p1 { --plate: var(--c-peach); }
+.p2 { --plate: var(--c-yellow); }
+.p3 { --plate: var(--c-mint); }
+.p4 { --plate: var(--c-sky); }
+.p5 { --plate: var(--c-pink); }
+svg { fill: currentColor; }
+svg .cut { fill: none; stroke: var(--plate); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* sayings band (static) */
+.sayings { background: var(--c-yellow); color: var(--on-color); border-bottom: 3px solid var(--ink); padding-block: 16px; }
+.sayings .wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; font-family: var(--display); font-size: clamp(1.05rem, 2.8vw, 1.45rem); line-height: 1.3; text-align: center; }
+.sayings span::after { content: "✶"; margin-left: 22px; color: var(--c-orange); -webkit-text-stroke: 1px var(--on-color); }
+.sayings span:last-child::after { content: none; }
+
+/* sections */
+.section { padding-block: clamp(40px, 7vw, 84px); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 28px; }
+.section-head h2 { font-size: clamp(2rem, 6vw, 3.4rem); }
+.section-head .tag { color: var(--muted); }
+
+/* spoon check */
+.spoon { padding: clamp(20px, 4vw, 40px); background: var(--c-mint); color: var(--on-color); }
+.spoon h2 { font-size: clamp(1.9rem, 5.5vw, 3.2rem); }
+.spoon .sub { margin-top: 10px; max-width: 52ch; font-weight: 700; }
+.spoon-btns { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 12px; }
+.spoon-btn { min-height: 52px; padding: 10px 22px; background: #fff; color: var(--on-color); border: 3px solid var(--on-color); border-radius: 999px; font-weight: 900; font-size: 1.02rem; box-shadow: 3px 3px 0 var(--on-color); }
+.spoon-btn:hover { background: var(--c-yellow); }
+.spoon-btn[aria-pressed="true"] { background: var(--on-color); color: var(--c-mint); }
+.spoon-out { margin-top: 24px; background: #fff; color: var(--on-color); border: 3px solid var(--on-color); border-radius: 20px; padding: 18px 20px; }
+.spoon-out .msg { font-family: var(--display); font-size: clamp(1.25rem, 3.4vw, 1.7rem); line-height: 1.15; }
+.picks { margin-top: 14px; display: grid; gap: 10px; }
+.pick { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding-top: 10px; border-top: 2px dashed var(--on-color); }
+.pick .thumb { width: 56px; height: 56px; border-radius: 14px; background: var(--plate); border: 2.5px solid var(--on-color); display: grid; place-items: center; color: var(--on-color); }
+.pick .thumb svg { width: 66%; height: 66%; }
+.pick .nm { font-weight: 900; line-height: 1.2; }
+.pick .pr { font-weight: 800; font-variant-numeric: tabular-nums; }
+.mini { min-height: 44px; background: var(--c-orange); color: var(--on-color); border: 3px solid var(--on-color); border-radius: 999px; padding: 6px 16px; font-weight: 900; }
+.mini:hover { background: var(--c-yellow); }
+.mini.done { background: var(--on-color); color: var(--c-yellow); }
+@media (max-width: 520px) { .pick { grid-template-columns: 56px minmax(0, 1fr); } .pick .mini { grid-column: 1 / -1; } }
+
+/* aisles */
+.aisles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+@media (max-width: 800px) { .aisles { grid-template-columns: minmax(0, 1fr); } }
+.aisle { background: var(--plate); color: var(--on-color); padding: 22px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.aisle h3 { font-family: var(--display); font-weight: 400; font-size: 1.9rem; line-height: 1.02; }
+.aisle p { max-width: 36ch; font-weight: 700; }
+.aisle .btn { margin-top: 6px; min-height: 46px; padding: 6px 20px; background: #fff; }
+
+/* shop */
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+.chip { min-height: 46px; padding: 8px 20px; background: var(--surface); color: var(--fg); border: 3px solid var(--ink); border-radius: 999px; font-weight: 900; box-shadow: 3px 3px 0 var(--shadow); }
+.chip:hover { background: var(--c-yellow); color: var(--on-color); }
+.chip[aria-pressed="true"] { background: var(--c-orange); color: var(--on-color); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); gap: 26px 18px; }
+.card { background: var(--surface); padding: 12px; display: flex; flex-direction: column; gap: 10px; min-width: 0; transition: transform 0.12s ease, box-shadow 0.12s ease; }
+.card:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--shadow); }
+.card .plate { position: relative; aspect-ratio: 1 / 1; display: grid; place-items: center; background: var(--plate); color: var(--on-color); border: 3px solid var(--ink); border-radius: 14px; }
+.card .plate svg { width: 58%; height: 58%; }
+.card .plate .tag { position: absolute; left: 8px; top: 8px; font-size: 0.64rem; color: var(--on-color); }
+.badge { position: absolute; right: -8px; bottom: 10px; background: var(--on-color); color: var(--c-yellow); border-radius: 8px; padding: 3px 9px; font-weight: 900; font-size: 0.78rem; transform: rotate(-5deg); max-width: 90%; }
+.card h3 { font-size: 1.12rem; }
+.card .note { color: var(--muted); font-size: 0.92rem; line-height: 1.4; }
+.card .row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; }
+.price { font-weight: 900; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.size-sel { background: var(--surface); color: var(--fg); border: 3px solid var(--ink); border-radius: 10px; padding: 4px 8px; min-height: 40px; font: inherit; font-weight: 800; }
+.add { width: 100%; min-height: 48px; background: var(--c-orange); color: var(--on-color); border: 3px solid var(--ink); border-radius: 999px; font-weight: 900; font-size: 1rem; }
+.add:hover { background: var(--c-yellow); }
+.add.done { background: var(--ink); color: var(--bg); }
+
+/* about */
+.about { background: var(--ink); color: var(--bg); border-top: 3px solid var(--ink); }
+:root[data-theme="dark"] .about { background: #0b0610; color: #fff3e6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .about { background: #0b0610; color: #fff3e6; } }
+.about .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(28px, 5vw, 64px); align-items: start; }
+.about h2 { font-size: clamp(2.2rem, 6.5vw, 4rem); color: var(--c-yellow); }
+.about .body { margin-top: 20px; display: grid; gap: 14px; font-size: 1.1rem; max-width: 52ch; }
+.fine { background: var(--c-yellow); color: var(--on-color); border: 3px solid #fff3e6; border-radius: 20px; box-shadow: 6px 6px 0 var(--c-orange); padding: 22px; transform: rotate(1.2deg); }
+.fine h3 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin-bottom: 12px; }
+.fine ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.fine li { font-weight: 800; padding-left: 28px; position: relative; line-height: 1.35; }
+.fine li::before { content: "✶"; position: absolute; left: 0; top: 0; color: var(--c-orange); -webkit-text-stroke: 1px var(--on-color); }
+@media (max-width: 800px) { .about .wrap { grid-template-columns: minmax(0, 1fr); } }
+
+footer { background: var(--c-yellow); color: var(--on-color); border-top: 3px solid var(--ink); padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px)); font-weight: 800; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; }
+
+/* bag */
+#scrim { position: fixed; inset: 0; z-index: 40; background: rgba(30, 14, 30, 0.55); }
+#drawer { position: fixed; top: 0; right: 0; bottom: 0; z-index: 50; width: min(450px, 100%); background: var(--surface); color: var(--fg); border-left: 3px solid var(--ink); display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px); }
+.d-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--c-orange); color: var(--on-color); border-bottom: 3px solid var(--ink); }
+.d-head h2 { font-size: 1.8rem; }
+.x-btn { background: #fff; color: var(--on-color); border: 3px solid var(--on-color); border-radius: 999px; padding: 6px 18px; min-height: 46px; font-weight: 900; }
+.x-btn:hover { background: var(--c-yellow); }
+.d-body { flex: 1; overflow-y: auto; padding: 8px 20px 20px; min-height: 0; }
+.empty { padding: 32px 0; color: var(--muted); font-size: 1.08rem; font-weight: 700; }
+.line-item { display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; gap: 12px; padding: 14px 0; border-bottom: 2px dashed var(--ink); align-items: center; }
+.line-item .thumb { width: 60px; height: 60px; border-radius: 14px; background: var(--plate); color: var(--on-color); border: 2.5px solid var(--ink); display: grid; place-items: center; }
+.line-item .thumb svg { width: 66%; height: 66%; }
+.line-item .name { font-weight: 900; line-height: 1.25; }
+.line-item .meta { color: var(--muted); font-size: 0.9rem; font-weight: 700; }
+.qty { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; }
+.qty button { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--ink); background: var(--surface); line-height: 1; font-size: 1.2rem; font-weight: 900; }
+.qty button:hover { background: var(--c-yellow); color: var(--on-color); }
+.qty span { min-width: 26px; text-align: center; font-weight: 900; font-variant-numeric: tabular-nums; }
+.line-total { font-weight: 900; font-variant-numeric: tabular-nums; align-self: start; }
+.d-foot { border-top: 3px solid var(--ink); padding: 16px 20px 18px; display: grid; gap: 12px; }
+.sub { display: flex; justify-content: space-between; font-weight: 900; font-size: 1.2rem; }
+#order-text { width: 100%; resize: vertical; min-height: 120px; background: var(--bg); color: var(--fg); border: 3px solid var(--ink); border-radius: 12px; padding: 10px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.82rem; line-height: 1.5; }
+.d-foot .hint { color: var(--muted); font-size: 0.92rem; font-weight: 700; }
+.d-foot label { color: var(--muted); }
+
+@keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.35); } 100% { transform: scale(1); } }
+.pop { animation: pop 0.3s ease; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn, .card { transition: none; }
+  .pop { animation: none; }
+}
+</style>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="wordmark" href="#top">M.S. Made Me…</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#spoons">Spoon check</a>
+      <a href="#shop">Shop</a>
+      <a href="#about">About</a>
+      <button class="bag-btn" id="bag-open" type="button" aria-haspopup="dialog" aria-expanded="false">
+        Bag <span class="count" id="bag-count">0</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="tag">Soft clothes · Cozy home · Kitchen that behaves</span>
+        <h1>M.S. Made Me…</h1>
+        <div class="bubble"><span id="rot" aria-hidden="true">buy the soft pants.</span><span class="sr-only" id="rot-sr" aria-live="polite">buy the soft pants.</span></div>
+        <div class="spin-row">
+          <button class="btn dark" id="spin" type="button">Spin the sentence</button>
+          <a class="btn white" href="#shop">Go shopping</a>
+        </div>
+        <p class="lede">Comfy clothes, cozy corners and kitchen gear that doesn't fight back. A shop with a sense of humour for the MS crowd, because we've got plenty to be serious about already.</p>
+      </div>
+      <div class="cluster" aria-hidden="true">
+        <div class="seal">Spoons not included</div>
+        <div class="tile p5"><span id="h-pants"></span><span class="tag">Pull on</span></div>
+        <div class="tile p2"><span id="h-skillet"></span><span class="tag">Whip up</span></div>
+        <div class="tile p3"><span id="h-blanket"></span><span class="tag">Flop onto</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sayings" aria-label="A few of our sayings">
+    <div class="wrap">
+      <span>Brain fog? Same.</span>
+      <span>Elastic waists only</span>
+      <span>Zero stairs</span>
+      <span>Nap-friendly</span>
+      <span>Spoons welcome</span>
+    </div>
+  </div>
+
+  <section class="section" id="spoons">
+    <div class="wrap">
+      <div class="spoon chunk">
+        <h2>How many spoons do you have today?</h2>
+        <p class="sub">Pick your energy level and we'll pick the goodies. No judgment, no wrong answers.</p>
+        <div class="spoon-btns" role="group" aria-label="Today's spoon count">
+          <button class="spoon-btn" type="button" data-spoon="low" aria-pressed="false">Barely any</button>
+          <button class="spoon-btn" type="button" data-spoon="few" aria-pressed="true">A few</button>
+          <button class="spoon-btn" type="button" data-spoon="plenty" aria-pressed="false">Spoons for days</button>
+        </div>
+        <div class="spoon-out" id="spoon-out"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="aisles" style="padding-top: 0;">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Three aisles, zero stairs</h2>
+        <span class="tag">Tap one to filter the shelf</span>
+      </div>
+      <div class="aisles">
+        <div class="aisle chunk p1">
+          <span class="tag">Clothing</span>
+          <h3>Pull-on and proud</h3>
+          <p>Elastic waists, soft fabrics and not a tiny button in sight. Getting dressed should not count as cardio.</p>
+          <button class="btn" type="button" data-jump="clothing">Shop clothing</button>
+        </div>
+        <div class="aisle chunk p4">
+          <span class="tag">Home goods</span>
+          <h3>For when the couch wins</h3>
+          <p>Soft throws, glowing candles and a basket within arm's reach, because bending down is overrated.</p>
+          <button class="btn" type="button" data-jump="home">Shop home goods</button>
+        </div>
+        <div class="aisle chunk p2">
+          <span class="tag">Kitchenware</span>
+          <h3>Few spoons? Cook anyway</h3>
+          <p>Lightweight pans and easy-grip tools for the days you only have a handful of spoons to spend.</p>
+          <button class="btn" type="button" data-jump="kitchen">Shop kitchenware</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="shop" style="padding-top: 0;">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Treat yourself</h2>
+        <span class="tag" id="shelf-count">12 treats</span>
+      </div>
+      <div class="chips" role="group" aria-label="Filter by category">
+        <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" type="button" data-filter="clothing" aria-pressed="false">Clothing</button>
+        <button class="chip" type="button" data-filter="home" aria-pressed="false">Home goods</button>
+        <button class="chip" type="button" data-filter="kitchen" aria-pressed="false">Kitchenware</button>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section class="about section" id="about">
+    <div class="wrap">
+      <div>
+        <h2>For the days your body has other plans.</h2>
+        <div class="body">
+          <p>The name does double duty. M.S. as in multiple sclerosis, and "Made Me…" as in, finish the sentence however your day went. Brain fog, fatigue, wobbly legs and all, we think you're allowed to laugh about it.</p>
+          <p>Everything on the shelf is picked to be easy to put on, easy to hold and easy to live with. Soft over stiff, light over heavy, simple over fiddly.</p>
+        </div>
+      </div>
+      <aside class="fine">
+        <h3>The fine print</h3>
+        <ul>
+          <li>Spoons not included.</li>
+          <li>Nothing flashes, nothing times out, nothing pops up.</li>
+          <li>Big buttons for tired hands.</li>
+          <li>Add to your bag, copy the order summary, send it to the shop.</li>
+          <li>Naps are encouraged.</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 M.S. Made Me…</span>
+    <span>Shop at your own pace.</span>
+  </div>
+</footer>
+
+<div id="scrim" hidden></div>
+<aside id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
+  <div class="d-head">
+    <h2 id="drawer-title">Your bag</h2>
+    <button class="x-btn" id="bag-close" type="button">Close</button>
+  </div>
+  <div class="d-body" id="d-body"></div>
+  <div class="d-foot" id="d-foot" hidden>
+    <div class="sub"><span>Subtotal</span><span class="price" id="subtotal">$0</span></div>
+    <label for="order-text" class="tag">Order summary</label>
+    <textarea id="order-text" readonly></textarea>
+    <button class="btn" id="copy-order" type="button">Copy order summary</button>
+    <p class="hint" id="copy-hint">Send this summary to the shop to place your order.</p>
+  </div>
+</aside>
+
+<script>
+(function () {
+  var ICONS = {
+    shirt: '<path d="M30 20 42 14Q50 23 58 14L70 20 84 36 74 45 68 39V84H32V39L26 45 16 36Z"/>',
+    jacket: '<path d="M30 20 42 14Q50 23 58 14L70 20 84 36 74 45 68 39V84H32V39L26 45 16 36Z"/><path class="cut" d="M50 23V84M37 62h8M55 62h8"/>',
+    pants: '<path d="M32 14H68L73 86H55L50 42 45 86H27Z"/><path class="cut" d="M32 24H68"/>',
+    vase: '<path d="M42 14H58V26Q75 40 71 62Q69 84 50 86Q31 84 29 62Q25 40 42 26Z"/><path class="cut" d="M36 56Q50 64 64 56"/>',
+    candle: '<rect x="24" y="40" width="12" height="46" rx="2"/><rect x="44" y="28" width="12" height="58" rx="2"/><rect x="64" y="46" width="12" height="40" rx="2"/><path d="M30 24Q36 32 30 37Q24 32 30 24Z"/><path d="M50 12Q56 20 50 25Q44 20 50 12Z"/><path d="M70 30Q76 38 70 43Q64 38 70 30Z"/>',
+    blanket: '<rect x="14" y="26" width="72" height="48" rx="3"/><path class="cut" d="M14 40H86M14 52H86M14 64H86"/>',
+    basket: '<path d="M18 46H82L75 86H25Z"/><path d="M30 46Q50 4 70 46" style="fill:none;stroke:currentColor;stroke-width:5;stroke-linecap:round"/><path class="cut" d="M22 60H78M24 72H76"/>',
+    skillet: '<circle cx="42" cy="54" r="30"/><circle class="cut" cx="42" cy="54" r="21"/><rect x="68" y="50" width="26" height="8" rx="4"/>',
+    spoons: '<g transform="rotate(-18 50 88)"><ellipse cx="50" cy="26" rx="10" ry="14"/><rect x="47" y="38" width="6" height="50" rx="3"/></g><g transform="rotate(18 50 88)"><ellipse cx="50" cy="26" rx="10" ry="14"/><rect x="47" y="38" width="6" height="50" rx="3"/></g>',
+    bowl: '<path d="M14 42H86Q84 82 50 84Q16 82 14 42Z"/><path class="cut" d="M20 54H80"/>',
+    apron: '<path d="M38 14H62L66 40 78 44 74 88H26L22 44 34 40Z"/><path class="cut" d="M40 60H60V76H40Z"/>',
+    towel: '<rect x="18" y="22" width="64" height="16" rx="2"/><rect x="14" y="42" width="72" height="16" rx="2"/><rect x="20" y="62" width="60" height="16" rx="2"/><path class="cut" d="M30 22v16M70 22v16M26 42v16M74 42v16M32 62v16M68 62v16"/>'
+  };
+  function svg(k) { return '<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">' + ICONS[k] + '</svg>'; }
+
+  var CATS = { clothing: 'Clothing', home: 'Home goods', kitchen: 'Kitchenware' };
+  var SIZES = ['XS', 'S', 'M', 'L', 'XL'];
+  var PRODUCTS = [
+    { id: 'pull-on-pants', name: 'The Pull-On Pants', cat: 'clothing', price: 58, ico: 'pants', tone: 1, badge: 'Nap-approved', note: 'Elastic waist, soft knit, no zip, no fuss. Pockets, naturally.', sizes: true },
+    { id: 'easy-linen-shirt', name: 'Easy-On Linen Shirt', cat: 'clothing', price: 68, ico: 'shirt', tone: 2, badge: 'Buttons: none', note: 'Roomy and breathable, with wide sleeves and no tiny buttons.', sizes: true },
+    { id: 'cozy-layer', name: 'The Cozy Layer', cat: 'clothing', price: 98, ico: 'jacket', tone: 5, badge: 'Easy zip', note: 'Soft quilted overshirt with an easy zip, for chilly rooms.', sizes: true },
+    { id: 'apron', name: 'Cross-Back Apron', cat: 'clothing', price: 46, ico: 'apron', tone: 3, badge: 'Snack pocket', note: 'No neck strain, and a big pocket for your phone and snacks.', sizes: false },
+    { id: 'soft-landing-throw', name: 'Soft Landing Throw', cat: 'home', price: 78, ico: 'blanket', tone: 4, badge: 'Couch wins', note: 'Plush and generous, for when the couch wins again.', sizes: false },
+    { id: 'reach-basket', name: 'Reach-Friendly Basket', cat: 'home', price: 38, ico: 'basket', tone: 2, badge: 'No bending', note: 'Keep things where you can grab them. Fewer bends, more nonsense.', sizes: false },
+    { id: 'calm-candles', name: 'Calm Down Candles', cat: 'home', price: 24, ico: 'candle', tone: 1, badge: 'Mood: calm', note: 'Six slow-burning tapers for dim, quiet evenings.', sizes: false },
+    { id: 'sofa-vase', name: 'Admire-From-the-Sofa Vase', cat: 'home', price: 54, ico: 'vase', tone: 5, badge: 'Sofa view', note: 'Tall, glazed and gorgeous. Flowers optional.', sizes: false },
+    { id: 'light-skillet', name: 'Lightweight Skillet', cat: 'kitchen', price: 64, ico: 'skillet', tone: 3, badge: 'Wrist-friendly', note: 'Lighter than cast iron, so your wrists have nothing to complain about.', sizes: false },
+    { id: 'extra-spoons', name: 'Extra Spoons Set', cat: 'kitchen', price: 32, ico: 'spoons', tone: 2, badge: 'Never enough', note: 'A nod to spoon theory: you can never have too many.', sizes: false },
+    { id: 'grip-bowl', name: 'Easy-Grip Mixing Bowl', cat: 'kitchen', price: 42, ico: 'bowl', tone: 4, badge: 'Steady hands', note: 'Wide handles and a steady base for wobbly moments.', sizes: false },
+    { id: 'tea-towels', name: 'Quick-Dry Tea Towels', cat: 'kitchen', price: 28, ico: 'towel', tone: 1, badge: 'Spills happen', note: 'Set of three. Spills happen, and so does everything else.', sizes: false }
+  ];
+  var BY_ID = {};
+  PRODUCTS.forEach(function (p) { BY_ID[p.id] = p; });
+
+  function money(n) { return '$' + n.toLocaleString('en-US'); }
+  function $(id) { return document.getElementById(id); }
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* hero artwork */
+  $('h-pants').outerHTML = svg('pants');
+  $('h-skillet').outerHTML = svg('skillet');
+  $('h-blanket').outerHTML = svg('blanket');
+
+  /* spin the sentence "M.S. Made Me…" (only on tap) */
+  var phrases = [
+    'buy the soft pants.',
+    'a professional napper.',
+    'count my spoons.',
+    'blame the brain fog.',
+    'a loyal friend to the couch.',
+    'cancel plans with style.',
+    'argue with my own legs.',
+    'own far too many elastic waistbands.',
+    'wait, what was I saying?'
+  ];
+  var cur = 0;
+  var spinning = false;
+  $('spin').addEventListener('click', function () {
+    if (spinning) return;
+    var next = cur;
+    while (next === cur) next = Math.floor(Math.random() * phrases.length);
+    function land() {
+      cur = next;
+      $('rot').textContent = phrases[cur];
+      $('rot-sr').textContent = phrases[cur];
+      spinning = false;
+    }
+    if (reduce) { land(); return; }
+    spinning = true;
+    var ticks = 0;
+    var t = setInterval(function () {
+      ticks++;
+      $('rot').textContent = phrases[Math.floor(Math.random() * phrases.length)];
+      if (ticks >= 7) { clearInterval(t); land(); }
+    }, 85);
+  });
+
+  /* spoon check */
+  var SPOONS = {
+    low: { msg: 'Low-spoon day. Nothing here needs assembling, ironing or heroics.', ids: ['pull-on-pants', 'soft-landing-throw', 'reach-basket'] },
+    few: { msg: 'A few spoons: enough for dinner, as long as the pan is light.', ids: ['easy-linen-shirt', 'light-skillet', 'calm-candles'] },
+    plenty: { msg: 'Spoons for days! Go bake something. We will be over here, impressed.', ids: ['apron', 'grip-bowl', 'sofa-vase'] }
+  };
+  function renderSpoon(key) {
+    var s = SPOONS[key];
+    $('spoon-out').innerHTML = '<p class="msg">' + s.msg + '</p><div class="picks">' +
+      s.ids.map(function (id) {
+        var p = BY_ID[id];
+        return '<div class="pick p' + p.tone + '"><div class="thumb">' + svg(p.ico) + '</div>' +
+          '<div><div class="nm">' + p.name + '</div><div class="pr">' + money(p.price) + '</div></div>' +
+          '<button class="mini" type="button" data-add="' + p.id + '" data-label="Add">Add</button></div>';
+      }).join('') + '</div>';
+    document.querySelectorAll('.spoon-btn').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-spoon') === key));
+    });
+  }
+
+  /* shelf */
+  var grid = $('grid');
+  var filter = 'all';
+  function renderGrid() {
+    var list = PRODUCTS.filter(function (p) { return filter === 'all' || p.cat === filter; });
+    grid.innerHTML = list.map(function (p) {
+      var sizeSel = p.sizes
+        ? '<select class="size-sel" id="size-' + p.id + '" aria-label="Size for ' + p.name + '">' +
+          SIZES.map(function (s) { return '<option' + (s === 'M' ? ' selected' : '') + '>' + s + '</option>'; }).join('') +
+          '</select>'
+        : '';
+      return '<article class="card chunk">' +
+        '<div class="plate p' + p.tone + '">' + svg(p.ico) + '<span class="tag">' + CATS[p.cat] + '</span><span class="badge">' + p.badge + '</span></div>' +
+        '<h3>' + p.name + '</h3>' +
+        '<p class="note">' + p.note + '</p>' +
+        '<div class="row"><span class="price">' + money(p.price) + '</span>' + sizeSel + '</div>' +
+        '<button class="add" type="button" data-add="' + p.id + '" data-label="Yes, please">Yes, please</button>' +
+        '</article>';
+    }).join('');
+    $('shelf-count').textContent = list.length + (list.length === 1 ? ' treat' : ' treats');
+    document.querySelectorAll('.chip').forEach(function (c) {
+      c.setAttribute('aria-pressed', String(c.getAttribute('data-filter') === filter));
+    });
+  }
+
+  /* bag */
+  var cart = [];
+  try {
+    var saved = JSON.parse(localStorage.getItem('msmm-cart') || '[]');
+    if (Array.isArray(saved)) { cart = saved.filter(function (l) { return l && BY_ID[l.id] && l.qty > 0; }); }
+  } catch (e) { cart = []; }
+  function persist() { try { localStorage.setItem('msmm-cart', JSON.stringify(cart)); } catch (e) {} }
+
+  function addToCart(id, size) {
+    var found = null;
+    cart.forEach(function (l) { if (l.id === id && l.size === size) found = l; });
+    if (found) { found.qty += 1; } else { cart.push({ id: id, size: size, qty: 1 }); }
+    persist();
+    renderBag();
+    var c = $('bag-count');
+    c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
+  }
+
+  function summaryText() {
+    var lines = cart.map(function (l) {
+      var p = BY_ID[l.id];
+      return '- ' + l.qty + ' x ' + p.name + (l.size ? ' (' + l.size + ')' : '') + ' - ' + money(p.price * l.qty);
+    });
+    var total = cart.reduce(function (s, l) { return s + BY_ID[l.id].price * l.qty; }, 0);
+    return 'Order for M.S. Made Me…\n\n' + lines.join('\n') + '\n\nSubtotal: ' + money(total);
+  }
+
+  function renderBag() {
+    var n = cart.reduce(function (s, l) { return s + l.qty; }, 0);
+    $('bag-count').textContent = n;
+    var body = $('d-body');
+    var foot = $('d-foot');
+    if (!cart.length) {
+      body.innerHTML = '<p class="empty">Your bag is empty, which is allowed. Rest up, then browse the shelf whenever you feel like it.</p>';
+      foot.hidden = true;
+      return;
+    }
+    body.innerHTML = cart.map(function (l, i) {
+      var p = BY_ID[l.id];
+      return '<div class="line-item p' + p.tone + '">' +
+        '<div class="thumb">' + svg(p.ico) + '</div>' +
+        '<div><div class="name">' + p.name + '</div>' +
+        '<div class="meta">' + (l.size ? 'Size ' + l.size + ' · ' : '') + money(p.price) + ' each</div>' +
+        '<div class="qty"><button type="button" data-dec="' + i + '" aria-label="Remove one ' + p.name + '">−</button>' +
+        '<span aria-live="polite">' + l.qty + '</span>' +
+        '<button type="button" data-inc="' + i + '" aria-label="Add one ' + p.name + '">+</button></div></div>' +
+        '<div class="line-total">' + money(p.price * l.qty) + '</div></div>';
+    }).join('');
+    var total = cart.reduce(function (s, l) { return s + BY_ID[l.id].price * l.qty; }, 0);
+    $('subtotal').textContent = money(total);
+    $('order-text').value = summaryText();
+    foot.hidden = false;
+  }
+
+  var drawer = $('drawer');
+  var scrim = $('scrim');
+  var openBtn = $('bag-open');
+  function openBag() {
+    drawer.hidden = false; scrim.hidden = false;
+    openBtn.setAttribute('aria-expanded', 'true');
+    $('bag-close').focus();
+  }
+  function closeBag() {
+    drawer.hidden = true; scrim.hidden = true;
+    openBtn.setAttribute('aria-expanded', 'false');
+    openBtn.focus();
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('button');
+    if (!t) return;
+    if (t.hasAttribute('data-add')) {
+      var id = t.getAttribute('data-add');
+      var sel = $('size-' + id);
+      addToCart(id, sel ? sel.value : (BY_ID[id].sizes ? 'M' : ''));
+      var label = t.getAttribute('data-label') || 'Add';
+      t.textContent = 'In your bag';
+      t.classList.add('done');
+      setTimeout(function () { t.textContent = label; t.classList.remove('done'); }, 1400);
+    } else if (t.hasAttribute('data-spoon')) {
+      renderSpoon(t.getAttribute('data-spoon'));
+    } else if (t.hasAttribute('data-filter')) {
+      filter = t.getAttribute('data-filter');
+      renderGrid();
+    } else if (t.hasAttribute('data-jump')) {
+      filter = t.getAttribute('data-jump');
+      renderGrid();
+      $('shop').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    } else if (t.hasAttribute('data-inc')) {
+      cart[+t.getAttribute('data-inc')].qty += 1;
+      persist(); renderBag();
+    } else if (t.hasAttribute('data-dec')) {
+      var i = +t.getAttribute('data-dec');
+      cart[i].qty -= 1;
+      if (cart[i].qty <= 0) cart.splice(i, 1);
+      persist(); renderBag();
+    }
+  });
+
+  openBtn.addEventListener('click', openBag);
+  $('bag-close').addEventListener('click', closeBag);
+  scrim.addEventListener('click', closeBag);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !drawer.hidden) closeBag(); });
+
+  $('copy-order').addEventListener('click', function () {
+    var ta = $('order-text');
+    var hint = $('copy-hint');
+    function fallback() {
+      ta.focus(); ta.select();
+      hint.textContent = 'Select the summary above and copy it, then send it to the shop.';
+    }
+    try {
+      navigator.clipboard.writeText(ta.value).then(function () {
+        hint.textContent = 'Copied. Send it to the shop to place your order.';
+      }, fallback);
+    } catch (err) { fallback(); }
+  });
+
+  renderSpoon('few');
+  renderGrid();
+  renderBag();
+})();
+</script>
